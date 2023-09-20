@@ -93,6 +93,9 @@ export const HeaderRight = styled.div`
       }
     }
   }
+  .search:hover {
+    border-color: #d9d9d9 !important;
+  }
 
   .center {
     width: 90px;
@@ -105,9 +108,12 @@ export const HeaderRight = styled.div`
     color: #ccc;
     cursor: pointer;
 
-    :hover {
+    &:hover {
       color: #fff;
       border-color: #fff;
     }
+  }
+  .login {
+    cursor: pointer;
   }
 `
