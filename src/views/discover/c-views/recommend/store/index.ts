@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { getBanners, getHotRecommend, getNewAlbum } from '../service'
+import {
+  getArtistList,
+  getBanners,
+  getHotRecommend,
+  getNewAlbum,
+  getPlayListDetail
+} from '../service'
 
 // 异步发送网络请求派发事件方式一:
 // export const getBannersAction = createAsyncThunk('banner', async (arg, { dispatch }) => {
@@ -24,15 +30,35 @@ export const getNewAlbumAction = createAsyncThunk('newAlbum', async () => {
   return res.albums
 })
 
+export const getRankingAction = createAsyncThunk('ranking', async () => {
+  const promises: Promise<any>[] = []
+  const rankingId = [19723756, 3779629, 2884035]
+  for (const id of rankingId) {
+    promises.push(getPlayListDetail(id))
+  }
+  return Promise.all(promises).then((res) => {
+    return res
+  })
+})
+
+export const getArtistListAction = createAsyncThunk('artist', async () => {
+  const res = await getArtistList(5)
+  return res.artists
+})
+
 interface IRecommendData {
   banners: any[]
   songs: any[]
   newAlbums: any[]
+  ranking: any[]
+  artists: any[]
 }
 const initialState: IRecommendData = {
   banners: [],
   songs: [],
-  newAlbums: []
+  newAlbums: [],
+  ranking: [],
+  artists: []
 }
 
 const recommendStore = createSlice({
@@ -59,6 +85,12 @@ const recommendStore = createSlice({
     })
     builder.addCase(getNewAlbumAction.fulfilled, (state, { payload }) => {
       state.newAlbums = payload
+    })
+    builder.addCase(getRankingAction.fulfilled, (state, { payload }) => {
+      state.ranking = payload
+    })
+    builder.addCase(getArtistListAction.fulfilled, (state, { payload }) => {
+      state.artists = payload
     })
   }
 })

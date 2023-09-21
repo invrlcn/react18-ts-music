@@ -21,8 +21,8 @@ const TopBanner: FC<IProps> = () => {
 
   // 获取背景图片
   let imageBgUrl
-  if (currentIndex >= 0 && banners.length > 0) {
-    imageBgUrl = banners[currentIndex].imageUrl + '?imageView&blur=40x20'
+  if (currentIndex >= 0 && banners) {
+    imageBgUrl = banners[currentIndex]?.imageUrl + '?imageView&blur=40x20'
   }
 
   function changeAfterClick(current: number) {
