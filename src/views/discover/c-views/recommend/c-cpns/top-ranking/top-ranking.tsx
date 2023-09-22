@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const TopRanking: FC<IProps> = () => {
-  const { rankData } = useAppSelector(
+  const { rankData = [] } = useAppSelector(
     (state) => ({
       rankData: state.recommend.ranking
     }),

@@ -14,7 +14,7 @@ const store = configureStore({
 })
 
 // 从 store 本身推断出 `RootState` 和 `AppDispatch` 类型
-type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>
 type AppDispatch = typeof store.dispatch
 
 // 在整个应用程序中使用，而不是简单的 `useDispatch` 和 `useSelector`

@@ -1,4 +1,8 @@
-body, textarea, select, input, button {
+body,
+textarea,
+select,
+input,
+button {
   font-size: 12px;
   color: #333;
   font-family: Arial, Helvetica, sans-serif;
@@ -57,4 +61,16 @@ body, textarea, select, input, button {
 
 .sprite_playlist {
   background: url(../img/playlist_sprite.png) no-repeat 0 9999px;
+}
+.ant-message-top {
+  transform: none !important;
+}
+.ant-message .ant-message-notice-content {
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 60px !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  color: white;
+  z-index: 100;
 }

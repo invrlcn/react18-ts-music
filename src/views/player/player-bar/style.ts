@@ -21,8 +21,10 @@ export const PlayerBarWrapper = styled.div`
     height: 47px;
   }
 `
-
-export const ControlWrapper = styled.div`
+interface IControl {
+  isPlay: boolean
+}
+export const ControlWrapper = styled.div<IControl>`
   display: flex;
   align-items: center;
 
@@ -44,7 +46,7 @@ export const ControlWrapper = styled.div`
     width: 36px;
     height: 36px;
     margin: 0 8px;
-    background-position: 0 -165px;
+    background-position: 0 ${(props) => (props.isPlay ? '-165px' : '-204px')};
   }
 
   .next {
