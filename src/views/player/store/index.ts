@@ -5,6 +5,7 @@ import { parseLyric } from '@/utils/pase-lyric'
 interface IAsyncThunkState {
   state: RootState
 }
+// 请求歌曲
 export const currentSongAction = createAsyncThunk<void, number, IAsyncThunkState>(
   'currentSong',
   async (id, { dispatch, getState }) => {
@@ -33,6 +34,7 @@ export const currentSongAction = createAsyncThunk<void, number, IAsyncThunkState
   }
 )
 
+// 请求歌词
 export const parseLyricAction = createAsyncThunk<void, number, IAsyncThunkState>(
   'lyric',
   async (id, { dispatch }) => {
@@ -42,12 +44,44 @@ export const parseLyricAction = createAsyncThunk<void, number, IAsyncThunkState>
   }
 )
 
+// 歌曲切换
+export const changeSongAction = createAsyncThunk<void, boolean, IAsyncThunkState>(
+  'changeSong',
+  (isNext, { dispatch, getState }) => {
+    // 1.获取state中的数据
+    const play = getState().player
+    const mode = play.playMode
+    const songIndex = play.playSongIndex
+    const songList = play.playSongList
+
+    // 2.根据不同的模式计算不同的下一首歌曲的索引
+    let newIndex = songIndex
+    if (mode === 1) {
+      // 1:随机播放
+      newIndex = Math.floor(Math.random() * songList.length)
+    } else {
+      newIndex = isNext ? songIndex + 1 : songIndex - 1
+      if (newIndex < 0) newIndex = songList.length - 1
+      if (newIndex > songList.length - 1) newIndex = 0
+    }
+
+    // 3.获取当前的歌曲
+    const song = songList[newIndex]
+    dispatch(changeCurrentSongAction(song))
+    dispatch(changePlaySongIndex(newIndex))
+
+    // 4.请求新的歌词
+    dispatch(parseLyricAction(song.id))
+  }
+)
+
 interface IPlayer {
   currentSong: any
   playSongList: any[]
   playSongIndex: number
   lyricData: []
   lyricIndex: number
+  playMode: number
 }
 const initialState: IPlayer = {
   currentSong: {},
@@ -145,14 +179,14 @@ const initialState: IPlayer = {
       publishTime: 0
     },
     {
-      name: ' 幻听 ',
-      id: 167655,
+      name: ' 画 ',
+      id: 202369,
       pst: 0,
       t: 0,
       ar: [
         {
-          id: 5771,
-          name: ' 许嵩 ',
+          id: 6731,
+          name: ' 赵雷 ',
           tns: [],
           alias: []
         }
@@ -160,80 +194,81 @@ const initialState: IPlayer = {
       alia: [],
       pop: 100,
       st: 0,
-      rt: '600902000009334954',
-      fee: 1,
-      v: 52,
+      rt: '600902000007908521',
+      fee: 8,
+      v: 50,
       crbt: null,
       cf: '',
       al: {
-        id: 16932,
-        name: ' 梦游计 ',
-        picUrl: 'https://p2.music.126.net/ifjKrYPuGzRHlbVDNScQfA==/109951166118946328.jpg',
+        id: 20339,
+        name: ' 赵小雷 ',
+        picUrl: 'https://p1.music.126.net/wldFtES1Cjnbqr5bjlqQbg==/18876415625841069.jpg',
         tns: [],
-        pic_str: '109951166118946328',
-        pic: 109951166118946340
+        pic_str: '18876415625841069',
+        pic: 18876415625841068
       },
-      dt: 273266,
+      dt: 228133,
       h: {
         br: 320000,
         fid: 0,
-        size: 10932811,
-        vd: -26180,
+        size: 9128272,
+        vd: -50392,
         sr: 44100
       },
       m: {
-        br: 192000,
+        br: 192002,
         fid: 0,
-        size: 6559704,
-        vd: -23577,
+        size: 5476981,
+        vd: -47796,
         sr: 44100
       },
       l: {
-        br: 128000,
+        br: 128002,
         fid: 0,
-        size: 4373151,
-        vd: -21810,
+        size: 3651335,
+        vd: -46049,
         sr: 44100
       },
       sq: {
-        br: 783967,
+        br: 847077,
         fid: 0,
-        size: 26779043,
-        vd: -26177,
+        size: 24155825,
+        vd: -50481,
         sr: 44100
       },
       hr: null,
       a: null,
       cd: '1',
-      no: 2,
+      no: 3,
       rtUrl: null,
       ftype: 0,
       rtUrls: [],
       djId: 0,
-      copyright: 1,
+      copyright: 2,
       s_id: 0,
       mark: 8192,
       originCoverType: 1,
       originSongSimpleData: null,
       tagPicList: null,
       resourceState: true,
-      version: 52,
+      version: 50,
       songJumpInfo: null,
       entertainmentTags: null,
       awardTags: null,
       single: 0,
       noCopyrightRcmd: null,
+      mv: 0,
       rtype: 0,
       rurl: null,
       mst: 9,
-      cp: 22036,
-      mv: 304279,
-      publishTime: 1341936000007
+      cp: 1400821,
+      publishTime: 1312646400007
     }
   ],
   playSongIndex: -1,
   lyricData: [],
-  lyricIndex: -1
+  lyricIndex: -1,
+  playMode: 0 // 0:顺序播放 1:随机播放 2:单曲循环
 }
 const playerStore = createSlice({
   name: 'player',
@@ -253,6 +288,9 @@ const playerStore = createSlice({
     },
     changePlaySongIndex(state, { payload }) {
       state.playSongIndex = payload
+    },
+    changePlayMOdeAction(state, { payload }) {
+      state.playMode = payload
     }
   }
 })
@@ -262,6 +300,7 @@ export const {
   changeLyricAction,
   changeLyricIndexAction,
   changePlaySongList,
-  changePlaySongIndex
+  changePlaySongIndex,
+  changePlayMOdeAction
 } = playerStore.actions
 export default playerStore.reducer
